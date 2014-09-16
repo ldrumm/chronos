@@ -75,6 +75,7 @@ do
     end
     local out = io.open(string.format("%s-%s.rockspec", rockspec.package, version ), "w")
     writerockspec(out, rockspec)
+    out:flush()
     if update_git then
         os.execute(string.format('git add . && git commit -a && git tag v%s', version))
     end
