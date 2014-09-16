@@ -6,7 +6,7 @@ rockspec = {
     package = "chronos",
     version = version,
     source = {
-        url = "https://github.com/ldrumm/chronos/archive/" .. version .. ".zip",
+        url = "https://github.com/ldrumm/chronos/archive/v" .. version .. ".zip",
         dir= "chronos-" .. version,
         tag = "v" .. version
     },
