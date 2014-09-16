@@ -1,7 +1,7 @@
 package = "chronos"
 version = "0.1-0"
 source = {
-    url = "https://github.com/ldrumm/chronos.git",
+    url = "git://github.com/ldrumm/chronos.git",
     tag = "v0.1"
 }
 
