@@ -29,3 +29,8 @@
 *.i*86
 *.x86_64
 *.hex
+
+
+#luarocks testing junk
+manifest
+*.src.rock

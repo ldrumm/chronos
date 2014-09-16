@@ -36,13 +36,18 @@ SOFTWARE.
  #define WIN32_LEAN_AND_MEAN
  #include <windows.h>
 #elif defined(__unix__) || defined(__linux__) && !defined(__APPLE__)
- #ifdef HAVE_CLOCK_GETTIME
-  #include <time.h>
- #else
-  #include <sys/time.h>
+ #include <unistd.h>
+ #if defined (_POSIX_TIMERS) && _POSIX_TIMERS > 0
+  #ifdef _POSIX_MONOTONIC_CLOCK
+   #define HAVE_CLOCK_GETTIME
+   #include <time.h>
+  #else
+    #warning "A nanosecond resolution monotonic clock is not available;
+    #warning "falling back to microsecond gettimeofday()"
+   #include <sys/time.h>
+  #endif
  #endif
 #endif
-
 
 # if !defined(__APPLE__) && (defined(__unix__) || defined(__linux__))
 static int chronos_nanotime(lua_State *L)
@@ -68,7 +73,7 @@ static int chronos_nanotime(lua_State *L)
     struct timespec t_info;
     static int init = 1;
     static struct timespec res_info = {.tv_nsec = 0, .tv_sec = 0};
-    double multiplier;
+    static double multiplier;
 
     if(clock_gettime(CLOCK_MONOTONIC, &t_info) != 0){
         return luaL_error(L, "clock_gettime() failed:%s", strerror(errno));
@@ -80,17 +85,16 @@ static int chronos_nanotime(lua_State *L)
     }
     lua_pushnumber(
         L,
-        (lua_Number)t_info.tv_sec + t_info.tv_nsec * multiplier
+        (lua_Number)t_info.tv_sec + (t_info.tv_nsec * multiplier)
     );
     return 1;
 
 #else
     struct timeval t_info;
-    static double multiplier = 1. / 1.e9;
     if(gettimeofday(&t_info, NULL) < 0){
         return luaL_error(L, "gettimeofday() failed!:%s", strerror(errno));
     };
-    lua_pushnumber(L, (lua_Number)t_info.tv_sec + t_info.tv_usec * multiplier);
+    lua_pushnumber(L, (lua_Number)t_info.tv_sec + t_info.tv_usec / 1.e6);
     return 1;
 #endif
 }
@@ -105,8 +109,9 @@ static int chronos_nanotime(lua_State * L)
     static double multiplier;
     static int init = 1;
 
-    /* Though bool,  to not return an error after WinXP, and the alternatives
-     have fairly crappy resolution.  However, if you're on XP, you've got bigger problems than timing.
+    /* Though bool, guaranteed to not return an error after WinXP,
+     and the alternatives have fairly crappy resolution.
+     However, if you're on XP, you've got bigger problems than timing.
     */
     (void) QueryPerformanceCounter(&timer);
     if(init){
@@ -136,14 +141,16 @@ static int chronos_nanotime(lua_State * L)
 #else
     static init = 1;
     static double resolution;
+    static double multiplier;
     mach_timebase_info_data_t res_info;
     if(init){
         mach_timebase_info(&res_info);
         resolution = (double)tinfo.numer / res_info.denom;
+        multiplier = 1. / 1.e9;
         init = 0;
     }
 
-    lua_pushnumber(mach_absolute_time() * resolution) / 1.e9;
+    lua_pushnumber((lua_Number)(mach_absolute_time() * resolution) * multiplier);
     return 1;
 #endif
 }
@@ -152,7 +159,7 @@ static int chronos_nanotime(lua_State * L)
 #endif
 
 
-static const luaL_reg chronos_reg[] = {
+static const struct luaL_Reg chronos_reg[] = {
     {"nanotime", chronos_nanotime},
     {NULL, NULL}
 };
