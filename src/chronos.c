@@ -42,8 +42,8 @@ SOFTWARE.
    #define HAVE_CLOCK_GETTIME
    #include <time.h>
   #else
-    #warning "A nanosecond resolution monotonic clock is not available;
-    #warning "falling back to microsecond gettimeofday()"
+   #warning "A nanosecond resolution monotonic clock is not available;"
+   #warning "falling back to microsecond gettimeofday()"
    #include <sys/time.h>
   #endif
  #endif
@@ -139,18 +139,18 @@ static int chronos_nanotime(lua_State * L)
     );
     return 1;
 #else
-    static init = 1;
+    static int init = 1;
     static double resolution;
     static double multiplier;
     mach_timebase_info_data_t res_info;
     if(init){
         mach_timebase_info(&res_info);
-        resolution = (double)tinfo.numer / res_info.denom;
+        resolution = (double)res_info.numer / res_info.denom;
         multiplier = 1. / 1.e9;
         init = 0;
     }
 
-    lua_pushnumber((lua_Number)(mach_absolute_time() * resolution) * multiplier);
+    lua_pushnumber(L, (lua_Number)(mach_absolute_time() * resolution) * multiplier);
     return 1;
 #endif
 }

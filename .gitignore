@@ -34,3 +34,4 @@
 #luarocks testing junk
 manifest
 *.src.rock
+src/mach/

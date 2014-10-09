@@ -1,3 +1,4 @@
+#!/usr/bin/env lua
 print("enter a new version:")
 version = string.match(io.read(), "v?([%d]+.[%d]+-[%d]+)")
 assert(version ~= nil)
@@ -54,9 +55,6 @@ do
         end
     end
 
-
-
-
     local update_git
     local delete_oldspec
     while delete_oldspec == nil do
@@ -71,7 +69,6 @@ do
 
     if delete_oldspec then
         os.execute(string.format("rm %s/*.rockspec", io.popen("pwd"):read()))
---        os.execute(string.format('git add . && commit -a && git tag v%s', version))
     end
     local out = io.open(string.format("%s-%s.rockspec", rockspec.package, version ), "w")
     writerockspec(out, rockspec)
@@ -79,5 +76,4 @@ do
     if update_git then
         os.execute(string.format('git add . && git commit -a && git tag v%s', version))
     end
-
 end
