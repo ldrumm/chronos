@@ -27,6 +27,11 @@ SOFTWARE.
 #include <lua.h>
 #include <lauxlib.h>
 
+#if LUA_VERSION_NUM < 502
+	#define luaL_newlib(L, l) ( lua_newtable(L), luaL_register(L, NULL, l))
+#endif
+
+
 #if defined(__APPLE__) && defined(__MACH__)
  #include <mach/mach_time.h>
  #ifdef CHRONOS_USE_COREAUDIO
