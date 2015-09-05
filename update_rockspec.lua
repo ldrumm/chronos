@@ -56,21 +56,13 @@ do
     end
 
     local update_git
-    local delete_oldspec
-    while delete_oldspec == nil do
-        print(string.format("delete old rockspecs(rm %s/*.rockspec)?[yes/NO]", io.popen("pwd"):read()))
-        delete_oldspec = io.read() == "yes"
-    end
     while update_git == nil do
-        print(string.format("Do 'git add . && commit -a && git tag v%s'?", version))
+        print(string.format("Do 'git add . && commit -a && git tag v%s'?[yes/NO]", version))
         update_git = io.read() == "yes"
     end
 
 
-    if delete_oldspec then
-        os.execute(string.format("rm %s/*.rockspec", io.popen("pwd"):read()))
-    end
-    local out = io.open(string.format("%s-%s.rockspec", rockspec.package, version ), "w")
+    local out = io.open(string.format("rockspecs/%s-%s.rockspec", rockspec.package, version ), "w")
     writerockspec(out, rockspec)
     out:flush()
     if update_git then

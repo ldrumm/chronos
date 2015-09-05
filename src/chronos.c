@@ -165,7 +165,7 @@ static const struct luaL_Reg chronos_reg[] = {
 };
 
 
-int luaopen_chronos(lua_State *L){
-    luaL_openlib(L, "os", chronos_reg, 0);
+LUA_API int luaopen_chronos(lua_State *L){
+    luaL_newlib(L, chronos_reg);
     return 1;
 }

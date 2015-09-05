@@ -1,12 +1,12 @@
 package = "chronos"
-version = "0.1-5"
+version = "0.2-0"
 
 build = {
+	type = "builtin",
 
 	modules = {
 		chronos = "src/chronos.c",
 	},
-	type = "builtin",
 }
 
 dependencies = {
@@ -14,8 +14,8 @@ dependencies = {
 }
 
 description = {
-	summary = "High resolution monotonic timers",
 	license = "MIT/X11",
+	summary = "High resolution monotonic timers",
 	detailed = "Wrappers around a number of platform-specific monotonic timers.\
     The highest resolution timer on each platform is used.  This is typically clock_gettime, gettimeofday, QueryPerformanceCounter, or similar depending on the capabilities of the host.\
     On a modern Linux system, nanosecond precision is common.\
@@ -24,7 +24,7 @@ description = {
 }
 
 source = {
-	url = "https://github.com/ldrumm/chronos/archive/v0.1-5.zip",
-	dir = "chronos-0.1-5",
-	tag = "v0.1-5",
+	tag = "v0.2-0",
+	url = "https://github.com/ldrumm/chronos/archive/v0.2-0.zip",
+	dir = "chronos-0.2-0",
 }
