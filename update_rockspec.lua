@@ -26,6 +26,16 @@ rockspec = {
     },
 
     build = {
+        platforms = {
+            unix = {
+                modules = {
+                    chronos = {
+                        sources = "src/chronos.c",
+                        libraries = {"rt"},
+                    },
+                },
+            },
+        },
         type = "builtin",
         modules = {
             chronos = "src/chronos.c",
