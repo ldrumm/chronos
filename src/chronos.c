@@ -76,17 +76,10 @@ static int chronos_nanotime(lua_State *L)
               incremental adjustments performed by adjtime(3).
     */
     struct timespec t_info;
-    static int init = 1;
-    static struct timespec res_info = {.tv_nsec = 0, .tv_sec = 0};
-    static double multiplier;
+    const double multiplier = 1.0 / 1e9;
 
-    if(clock_gettime(CLOCK_MONOTONIC, &t_info) != 0){
+    if (clock_gettime(CLOCK_MONOTONIC, &t_info) != 0) {
         return luaL_error(L, "clock_gettime() failed:%s", strerror(errno));
-    }
-    if(init){
-        clock_getres(CLOCK_MONOTONIC, &res_info);
-        multiplier = 1. / (1.e9 / res_info.tv_nsec);
-        init = 0;
     }
     lua_pushnumber(
         L,
@@ -96,7 +89,7 @@ static int chronos_nanotime(lua_State *L)
 
 #else
     struct timeval t_info;
-    if(gettimeofday(&t_info, NULL) < 0){
+    if (gettimeofday(&t_info, NULL) < 0) {
         return luaL_error(L, "gettimeofday() failed!:%s", strerror(errno));
     };
     lua_pushnumber(L, (lua_Number)t_info.tv_sec + t_info.tv_usec / 1.e6);
